@@ -1,0 +1,19 @@
+{
+  "name": "ticketazo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node": "^24.2.0"
+  },
+  "devDependencies": {
+    "cypress": "^14.4.1"
+  }
+}

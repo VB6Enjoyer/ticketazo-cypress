@@ -1,0 +1,25 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "title": "Tesis Cervantes",
+      "date": "2025-05-02",
+      "time": "19:30",
+      "venue": "Cervantes",
+      "category": "Teatro",
+      "image": "/api/uploads/image_1747092236271.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Sinfonia Metallica",
+      "date": "2025-05-16",
+      "time": "20:00",
+      "venue": "The Roxy Live",
+      "category": "Recital",
+      "image": "/api/uploads/image_1747056289745.jpg"
+    }
+  ],
+  "total": 2,
+  "page": 1,
+  "totalPages": 1
+}
