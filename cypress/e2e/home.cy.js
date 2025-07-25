@@ -193,7 +193,7 @@ describe("Home", () => {
       });
     });
 
-    it.skip('should display similar events in the side panel', () => {
+    it.skip('Se muestran eventos similares en el panel', () => {
       cy.get('[data-cy^="btn-ver-evento"]').first().click();
 
       // Comprobar que existe un evento similar
