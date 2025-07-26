@@ -1,11 +1,21 @@
+// Cypress.Commands.add("login", (email = "test@example.com", password = "password123") => {
+//     const cy = Cypress.cy
+//     cy.visit("https://vps-3696213-x.dattaweb.com/auth/login")
+//     cy.get('[data-cy="email-input"]').type(email)
+//     cy.get('[data-cy="password-input"]').type(password)
+//     cy.get('[data-cy="login-button"]').click()
+//     cy.url().should("not.include", "/auth/login")
+// })
+
 Cypress.Commands.add("login", (email = "test@example.com", password = "password123") => {
-    const cy = Cypress.cy
-    cy.visit("https://vps-3696213-x.dattaweb.com/auth/login")
-    cy.get('[data-cy="email-input"]').type(email)
-    cy.get('[data-cy="password-input"]').type(password)
-    cy.get('[data-cy="login-button"]').click()
-    cy.url().should("not.include", "/auth/login")
-})
+  cy.visit("https://vps-3696213-x.dattaweb.com/auth/login");
+
+  cy.get('[data-cy="input-email"]').type(email);
+  cy.get('[data-cy="input-password"]').type(password);
+  cy.get('[data-cy="btn-login"]').click();
+
+  cy.url().should("not.include", "/auth/login");
+});
 
 Cypress.Commands.add("logout", () => {
     const cy = Cypress.cy
