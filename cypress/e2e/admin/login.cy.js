@@ -16,7 +16,7 @@ describe('Ticketazo UI', () => {
         cy.get('body').should('not.contain', 'Invalid credentials');
     });
 
-    it('should approve a pending client', () => {
+    it('aprobar un organizador pendiente', () => {
         cy.visit('https://vps-3696213-x.dattaweb.com/');
         // Click en el botón del menú
         cy.get('button[aria-label="Toggle menu"]').click();
