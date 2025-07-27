@@ -40,6 +40,23 @@ describe('Ticketazo UI', () => {
     });
   });
 
+  it('verificar la validación de campos obligatorios', () => {
+      cy.visit('https://vps-3696213-x.dattaweb.com/');
+      cy.get('button[aria-label="Toggle menu"]').click();
+      cy.get(':nth-child(2) > .pb-4').click();
+    
+      // Intentar enviar el formulario sin completar los campos obligatorios
+      cy.get('.rounded-b-large > .z-0').click();
+
+      // Verificar que se muestran mensajes de error
+      cy.get('[data-cy="input-titulo"]').should('exist');
+      cy.get('[data-cy="select-edad"]').should('exist');
+      cy.get('[data-cy="select-genero"]').should('exist');
+      cy.get('[data-cy="input-duracion"]').should('exist');
+      cy.get('[data-cy="select-lugar-evento"]').should('exist');
+      cy.wait(3000); // esperar a que se muestren los mensajes de error
+    });
+
   it('cargar eventos', () => {
     cy.visit('https://vps-3696213-x.dattaweb.com/');
     cy.get('button[aria-label="Toggle menu"]').click();
@@ -92,6 +109,8 @@ describe('Ticketazo UI', () => {
       });
       
     cy.get('.rounded-b-large > .z-0').click();
+    cy.wait(1000); // esperar a que se guarde el evento
 
     })
+
 })
