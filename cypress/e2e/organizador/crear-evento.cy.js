@@ -42,7 +42,7 @@ describe('Ticketazo UI', () => {
 
   it('verificar la validación de campos obligatorios', () => {
       cy.visit('https://vps-3696213-x.dattaweb.com/');
-      cy.get('button[aria-label="Toggle menu"]').click();
+      cy.get('button[aria-label="Toggle menu"]').eq(0).click();
       cy.get(':nth-child(2) > .pb-4').click();
     
       // Intentar enviar el formulario sin completar los campos obligatorios
@@ -59,7 +59,7 @@ describe('Ticketazo UI', () => {
 
   it('cargar eventos', () => {
     cy.visit('https://vps-3696213-x.dattaweb.com/');
-    cy.get('button[aria-label="Toggle menu"]').click();
+    cy.get('button[aria-label="Toggle menu"]').eq(0).click();
     cy.get(':nth-child(2) > .pb-4').click();
     cy.get('input[aria-label="Evento con múltiples fechas y horarios"]').click();
 
