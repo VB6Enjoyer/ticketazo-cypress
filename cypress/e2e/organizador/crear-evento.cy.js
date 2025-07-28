@@ -29,12 +29,18 @@ Cypress.Commands.add('seleccionarFecha', (labelCompleto) => {
     .click();
 });
 
-describe('Ticketazo UI', () => {
+describe('Ticketazo UI - Organizador', () => {
   beforeEach(() => {
-    cy.session('admin-session', () => {
+    cy.session('organizador-session', () => {
+      const organizador = Cypress.env('organizador');
+
+      if (!organizador) {
+        throw new Error('No se encontraron las credenciales del usuario organizador en cypress.env.json');
+      }
+
       cy.visit('https://vps-3696213-x.dattaweb.com/auth/login');
-      cy.get('input[type="email"]').type('agustinarufinoc@gmail.com');
-      cy.get('input[type="password"]').type('Nala2301$');
+      cy.get('[data-cy="input-email"]').type(organizador.email);
+      cy.get('[data-cy="input-password"]').type(organizador.password);
       cy.get('[data-cy="btn-login"]').click();
       cy.url().should('not.include', '/auth/login');
     });
@@ -44,10 +50,7 @@ describe('Ticketazo UI', () => {
     cy.visit('https://vps-3696213-x.dattaweb.com/');
     cy.get('button[aria-label="Toggle menu"]').eq(0).click();
     cy.get(':nth-child(2) > .pb-4').click();
-
-    // Intentar enviar el formulario sin completar los campos obligatorios
     cy.get('.rounded-b-large > .z-0').click();
-
     // Verificar que se muestran mensajes de error
     cy.get('[data-cy="input-titulo"]').should('exist');
     cy.get('[data-cy="select-edad"]').should('exist');
@@ -109,7 +112,6 @@ describe('Ticketazo UI', () => {
         });
       }
 
-      
       const cordobas = $options.filter((i, el) => el.innerText.includes('Córdoba'));
 
       // Intentar seleccionar la segunda opción (si existe)

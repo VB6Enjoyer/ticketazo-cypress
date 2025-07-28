@@ -1,14 +1,19 @@
 describe('Ticketazo UI', () => {
-    beforeEach(() => {
-        // Preservar el estado de login entre tests
-        cy.session('admin-session', () => {
-            cy.visit('https://vps-3696213-x.dattaweb.com/auth/login');
-            cy.get('input[type="email"]').type('admin@admin.com');
-            cy.get('input[type="password"]').type('admin');
-            cy.get('[data-cy="btn-login"]').click();
-            cy.url().should('not.include', '/auth/login');
-        });
+  beforeEach(() => {
+    cy.session('admin-session', () => {
+      const admin = Cypress.env('admin');
+
+      if (!admin) {
+        throw new Error('No se encontraron las credenciales del usuario admin en cypress.env.json');
+      }
+
+      cy.visit('https://vps-3696213-x.dattaweb.com/auth/login');
+      cy.get('[data-cy="input-email"]').type(admin.email);
+      cy.get('[data-cy="input-password"]').type(admin.password);
+      cy.get('[data-cy="btn-login"]').click();
+      cy.url().should('not.include', '/auth/login');
     });
+  });
 
     it('should login successfully', () => {
         cy.visit('https://vps-3696213-x.dattaweb.com/');
@@ -37,5 +42,5 @@ describe('Ticketazo UI', () => {
         cy.get('[data-cy^="select-estado-"]').first()
           .should('contain.text', 'Aprobado');
     });
-});
+})
 
