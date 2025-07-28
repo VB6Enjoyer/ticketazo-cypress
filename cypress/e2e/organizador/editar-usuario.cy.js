@@ -63,6 +63,18 @@ describe('Ticketazo UI', () => {
             .and('contain.text', 'Estado actualizado')
             .and('contain.text', 'Estado actualizado correctamente.');
         cy.wait(1000);
+
+         cy.get('button[data-cy="select-estado-3"]').click();
+        cy.wait(300);
+        cy.get('[role="listbox"]:visible [role="option"]')
+            .contains('Aceptado')
+            .first()
+            .click();
+        cy.get('.z-50 > .flex-grow')
+            .should('be.visible')
+            .and('contain.text', 'Estado actualizado')
+            .and('contain.text', 'Estado actualizado correctamente.');
+        cy.wait(1000);
     })
 
 
