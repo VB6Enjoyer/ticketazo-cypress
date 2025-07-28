@@ -39,7 +39,7 @@ describe('Ticketazo UI', () => {
                 if (val !== 'CC2025') {
                     Cypress.log({
                         name: 'warning',
-                        message: `Nombre de usuario no coincide: esperado "CC2025", recibido "${val}"`,
+                        message: `⚠️ Nombre de usuario no coincide: esperado "CC2025", recibido "${val}"`,
                     });
                 }
             });
@@ -50,7 +50,7 @@ describe('Ticketazo UI', () => {
                 if (val !== 'https://linkedin.com/in/cc2025') {
                     Cypress.log({
                         name: 'warning',
-                        message: `LinkedIn no coincide: esperado "https://linkedin.com/in/cc2025", recibido "${val}"`,
+                        message: `⚠️ LinkedIn no coincide: esperado "https://linkedin.com/in/cc2025", recibido "${val}"`,
                     });
                 }
             });
@@ -62,7 +62,7 @@ describe('Ticketazo UI', () => {
             if (val !== 'https://twitter.com/cc2025') {
                 Cypress.log({
                     name: 'warning',
-                    message: `Twitter no coincide: esperado "https://twitter.com/cc2025", recibido "${val}"`,
+                    message: `⚠️ Twitter no coincide: esperado "https://twitter.com/cc2025", recibido "${val}"`,
                 });
             }
         });
@@ -72,7 +72,7 @@ describe('Ticketazo UI', () => {
             if (val !== 'https://instagram.com/cc2025') {
                 Cypress.log({
                     name: 'warning',
-                    message: `Instagram no coincide: esperado "https://instagram.com/cc2025", recibido "${val}"`,
+                    message: `⚠️Instagram no coincide: esperado "https://instagram.com/cc2025", recibido "${val}"`,
                 });
             }
         });
@@ -82,7 +82,7 @@ describe('Ticketazo UI', () => {
             if (val !== 'https://tiktok.com/cc2025') {
                 Cypress.log({
                     name: 'warning',
-                    message: `TikTok no coincide: esperado "https://tiktok.com/cc2025", recibido "${val}"`,
+                    message: `⚠️ TikTok no coincide: esperado "https://tiktok.com/cc2025", recibido "${val}"`,
                 });
             }
         })
