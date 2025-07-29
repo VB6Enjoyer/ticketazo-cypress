@@ -104,9 +104,60 @@ describe("Home", () => {
       });
     });
 
-    it.skip("Búsqueda por provincia y localidad", () => {
-      // TODO
+    it("Búsqueda por provincia y localidad", () => {
+      // Intercepta el fetch de localidades al elegir provincia
+      cy.intercept('GET', '**/api/backend/ubicacion/localidadesConEventos?idProvincia=*').as('loadLocalidades');
+
+      // Abre el dropdown de provincia
+      cy.get('button[aria-label="Provincia"]').should('be.visible').click();
+
+      // Selecciona la opción "Córdoba" del dropdown
+      cy.get('ul[role="listbox"] > li')
+        .contains(/^Córdoba$/) // Asegura match exacto
+        .click({ force: true });
+
+      cy.wait('@loadLocalidades');
+      cy.get('button[aria-label="Localidad"]', { timeout: 10000 }).should('be.visible').click();
+
+      // Selecciona la opción "Córdoba" del dropdown
+      cy.get('ul[role="listbox"] > li')
+        .contains(/^Córdoba$/) // Asegura match exacto
+        .click({ force: true });
+
+      // Abre el primer evento
+      cy.get('[data-cy^="evento-card-"]')
+        .first()
+        .contains('Ver evento')
+        .scrollIntoView()
+        .click({ force: true });
+
+      cy.get('.min-h-screen iframe', { timeout: 10000 })
+        .should('exist')
+        .scrollIntoView()
+        .should('be.visible')
+        .invoke('attr', 'src')
+        .then((src) => {
+          expect(src).to.not.be.null;
+
+          const match = src.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+          expect(match).to.not.be.null;
+
+          const lat = parseFloat(match[1]);
+          const lng = parseFloat(match[2]);
+
+          const cordobaBounds = {
+            latMin: -31.5,
+            latMax: -31.2,
+            lngMin: -64.3,
+            lngMax: -64.1,
+          };
+
+          expect(lat).to.be.within(cordobaBounds.latMin, cordobaBounds.latMax);
+          expect(lng).to.be.within(cordobaBounds.lngMin, cordobaBounds.lngMax);
+        });
+
     });
+
 
     it.skip("Limpiar filtros", () => {
       cy.get('input[placeholder="Busca tu próxima función!"]').type("Test"); // Buscar todos los eventos que tengan "Test"
