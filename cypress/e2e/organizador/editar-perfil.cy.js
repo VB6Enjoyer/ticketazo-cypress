@@ -1,8 +1,15 @@
 describe('Ticketazo UI - Organizador', () => {
+  const perfilData = {
+    username: 'CC2025',
+    LinkedIn: 'https://linkedin.com/in/cordoba.cultura',
+    Twitter: 'https://twitter.com/cordoba.cultura',
+    Instagram: 'https://instagram.com/cordoba.cultura',
+    TikTok: 'https://tiktok.com/cordoba.cultura',
+  };
+
   beforeEach(() => {
     cy.session('organizador-session', () => {
       const organizador = Cypress.env('organizador');
-
       if (!organizador) {
         throw new Error('No se encontraron las credenciales del usuario organizador en cypress.env.json');
       }
@@ -15,83 +22,45 @@ describe('Ticketazo UI - Organizador', () => {
     });
   });
 
-    it('editar perfil de organizador', () => {
-        cy.visit('https://vps-3696213-x.dattaweb.com/');
-        cy.get('button[aria-label="Toggle menu"]').eq(0).click();
-        cy.get(':nth-child(4) > .pb-4').click();
-        cy.wait(2000); // esperar a que se cargue la página de perfil
+  it('editar perfil de organizador', () => {
+    cy.visit('https://vps-3696213-x.dattaweb.com/');
+    cy.get('button[aria-label="Toggle menu"]').eq(0).click();
+    cy.get(':nth-child(4) > .pb-4').click();
+    cy.wait(2000);
 
-        cy.get('input[aria-label="Nombre de usuario"]').clear().type('CC2025');
-        cy.get('input[aria-label="LinkedIn"]').clear().type('https://linkedin.com/in/cc2025');
-        cy.get('input[aria-label="Twitter"]').clear().type('https://twitter.com/cc2025');
-        cy.get('input[aria-label="Instagram"]').clear().type('https://instagram.com/cc2025');
-        cy.get('input[aria-label="TikTok"]').clear().type('https://tiktok.com/cc2025');
-        cy.get('[data-cy="btn-save-profile"]').click();
-        cy.get('.z-50 > .flex-grow')
-            .should('be.visible')
-            .and('contain.text', 'Perfil actualizado')
-            .and('contain.text', '¡Perfil actualizado con éxito!');
-        cy.wait(1000); // esperar a que se muestre el mensaje de éxito
+    cy.get('input[aria-label="Nombre de usuario"]').clear().type(perfilData.username);
+    Object.entries(perfilData).forEach(([label, value]) => {
+      if (label !== 'username') {
+        cy.get(`input[aria-label="${label}"]`).clear().type(value);
+      }
     });
 
-    it('validar los cambios en el perfil', () => {
-        cy.visit('https://vps-3696213-x.dattaweb.com/');
-        cy.get('button[aria-label="Toggle menu"]').eq(0).click();
-        cy.get(':nth-child(4) > .pb-4').click();
-        cy.wait(2000); // esperar a que se cargue la página de perfil
-        cy.get('input[aria-label="Nombre de usuario"]')
-            .should(($input) => {
-                const val = $input.val();
-                if (val !== 'CC2025') {
-                    Cypress.log({
-                        name: 'warning',
-                        message: `⚠️ Nombre de usuario no coincide: esperado "CC2025", recibido "${val}"`,
-                    });
-                }
-            });
+    cy.get('[data-cy="btn-save-profile"]').click();
+    cy.get('.z-50 > .flex-grow')
+      .should('be.visible')
+      .and('contain.text', 'Perfil actualizado')
+      .and('contain.text', '¡Perfil actualizado con éxito!');
+    cy.wait(1000);
+  });
 
-        cy.get('input[aria-label="LinkedIn"]')
-            .should(($input) => {
-                const val = $input.val();
-                if (val !== 'https://linkedin.com/in/cc2025') {
-                    Cypress.log({
-                        name: 'warning',
-                        message: `⚠️ LinkedIn no coincide: esperado "https://linkedin.com/in/cc2025", recibido "${val}"`,
-                    });
-                }
-            });
+  it('validar los cambios en el perfil', () => {
+    cy.visit('https://vps-3696213-x.dattaweb.com/');
+    cy.get('button[aria-label="Toggle menu"]').eq(0).click();
+    cy.get(':nth-child(4) > .pb-4').click();
+    cy.wait(2000);
 
-
-        cy.get('input[aria-label="Twitter"]')
-            .should(($input) => {
-                const val = $input.val();
-                if (val !== 'https://twitter.com/cc2025') {
-                    Cypress.log({
-                        name: 'warning',
-                        message: `⚠️ Twitter no coincide: esperado "https://twitter.com/cc2025", recibido "${val}"`,
-                    });
-                }
+    Object.entries(perfilData).forEach(([label, expectedValue]) => {
+      const ariaLabel = label === 'username' ? 'Nombre de usuario' : label;
+      cy.get(`input[aria-label="${ariaLabel}"]`)
+        .should(($input) => {
+          const val = $input.val();
+          if (val !== expectedValue) {
+            Cypress.log({
+              name: 'warning',
+              message: `⚠️ ${ariaLabel} no coincide: esperado "${expectedValue}", recibido "${val}"`,
             });
-        cy.get('input[aria-label="Instagram"]')
-            .should(($input) => {
-                const val = $input.val();
-                if (val !== 'https://instagram.com/cc2025') {
-                    Cypress.log({
-                        name: 'warning',
-                        message: `⚠️Instagram no coincide: esperado "https://instagram.com/cc2025", recibido "${val}"`,
-                    });
-                }
-            });
-        cy.get('input[aria-label="TikTok"]')
-            .should(($input) => {
-                const val = $input.val();
-                if (val !== 'https://tiktok.com/cc2025') {
-                    Cypress.log({
-                        name: 'warning',
-                        message: `⚠️ TikTok no coincide: esperado "https://tiktok.com/cc2025", recibido "${val}"`,
-                    });
-                }
-            })
-    })
-
-})
+          }
+        });
+    });
+  });
+});
