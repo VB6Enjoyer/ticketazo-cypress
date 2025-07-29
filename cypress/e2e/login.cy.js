@@ -6,16 +6,23 @@ describe("Página de login", () => {
   });
 
   describe("Login", () => {
-    // TODO
-    it.skip("Login funciona", () => {
-      // Llenar formulario de login (cambiar por credenciales correctas)
-      cy.get('[data-cy="input-email"]').type("test@example.com");
-      cy.get('[data-cy="input-password"]').type("password123");
+    it("Login funciona con credenciales válidas", () => {
+
+      // Ingresar credenciales reales (reemplazá con las válidas)
+      cy.get('[data-cy="input-email"]').type("sofia88837utn@gmail.com");
+      cy.get('[data-cy="input-password"]').type("Lupehermosa10/");
+
+      // Click en botón login
       cy.get('[data-cy="btn-login"]').click();
 
-      // Verificar si el login funcionó
+      // Verificar que redirige fuera del login
       cy.url().should("not.include", "/auth/login");
-      // TODO Acá debería ir alguna clase de verificación adicional del funcionamiento del login
+
+      // Verificar que el botón de logout sea visible (indicador de sesión iniciada)
+      cy.contains("Logout").should("be.visible");
+
+      // Alternativa: verificar si está en la pantalla principal
+      cy.url().should("include", "/"); // o alguna ruta específica como /home
     });
 
     it.skip("Login tira error", () => {
@@ -64,12 +71,11 @@ describe("Página de login", () => {
   });
 
   describe("Manejo de sesión", () => {
-    it.skip("Mantiene sesión al refrescar la página", () => {
-      // TODO
+    it("Rutas protegidas redireccionan a pantalla de login", () => {
+      cy.clearCookies();
+      cy.visit("https://vps-3696213-x.dattaweb.com/tickets/list", { failOnStatusCode: false });
+      cy.url().should("include", "/auth/login");
+      cy.get('[data-cy="input-email"]').should("exist");
     });
-
-    it.skip("Rutas protegidas redireccionan a pantalla de login", () => {
-      // TODO
-    });
-  })
+  });
 });
