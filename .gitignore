@@ -1,28 +1,2 @@
-# Node modules
 node_modules/
-package-lock.json
-
-# Cypress config and output
-cypress/screenshots/
-cypress/videos/
-cypress/downloads/
-
-# Optional: si usás fixtures temporales
-cypress/fixtures/*.tmp.*
-
-# Logs y debug
-*.log
-cypress/logs/
-
-# VSCode config
-.vscode/
-
-# Archivos del sistema
-.DS_Store
-Thumbs.db
-
-# Entornos o credenciales
-.env
-.env.local
-.env.test
-.env.*.local
+cypress.env.json

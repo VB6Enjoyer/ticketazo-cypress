@@ -116,17 +116,8 @@ describe("Home", () => {
         .contains(/^Córdoba$/) // Asegura match exacto
         .click({ force: true });
 
-      // Alternativamente si las opciones no están en un `ul`, usar:
-      // cy.get('div[role="option"]').contains(/^Córdoba$/).click({ force: true });
-
-      // Espera a que cargue el filtro de localidad
       cy.wait('@loadLocalidades');
       cy.get('button[aria-label="Localidad"]', { timeout: 10000 }).should('be.visible').click();
-
-      // // Selecciona Córdoba Capital como localidad
-      // cy.get('div[role="option"]')
-      //   .contains('Córdoba')
-      //   .click({ force: true });
 
       // Selecciona la opción "Córdoba" del dropdown
       cy.get('ul[role="listbox"] > li')
@@ -140,7 +131,6 @@ describe("Home", () => {
         .scrollIntoView()
         .click({ force: true });
 
-      // Espera a que aparezca el modal (ajustá selector si no tenés `data-cy`)
       cy.get('.min-h-screen iframe', { timeout: 10000 })
         .should('exist')
         .scrollIntoView()
@@ -167,7 +157,6 @@ describe("Home", () => {
         });
 
     });
-
 
 
     it.skip("Limpiar filtros", () => {
