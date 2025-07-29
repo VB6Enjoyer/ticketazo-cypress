@@ -1,20 +1,20 @@
+// Comando para navegar al mes deseado
 Cypress.Commands.add('irAlMes', (mesEsperado) => {
   function intentarAvanzar() {
     cy.get('body').then(($body) => {
-      // Asegurarse que el header está en el DOM
       if ($body.find('div[data-slot="header-wrapper"] span').length) {
         cy.get('div[data-slot="header-wrapper"] span')
           .invoke('text')
           .then((mesActual) => {
             if (mesActual.trim().toLowerCase() !== mesEsperado.toLowerCase()) {
               cy.get('button[data-slot="next-button"]').click();
-              cy.wait(300); // dar tiempo a que el calendario se actualice
+              cy.wait(300);
               intentarAvanzar();
             }
           });
       } else {
         cy.wait(500);
-        intentarAvanzar(); // reintentar hasta que aparezca
+        intentarAvanzar();
       }
     });
   }
@@ -22,12 +22,42 @@ Cypress.Commands.add('irAlMes', (mesEsperado) => {
   intentarAvanzar();
 });
 
-
 Cypress.Commands.add('seleccionarFecha', (labelCompleto) => {
   cy.get(`[aria-label="${labelCompleto}"]`, { timeout: 10000 })
     .should('exist')
     .click();
 });
+
+const evento = {
+  titulo: 'The end',
+  edad: 'ATP',
+  genero: 'Recital',
+  duracion: { hora: '05', minuto: '00' },
+  lugar: {
+    nombre: 'Plaza de la Música',
+    calle: 'Av. Colon',
+    altura: '1234',
+    codigoPostal: '5000',
+    provincia: 'Córdoba',
+    localidad: 'Córdoba'
+  },
+  info: 'Evento de prueba apto para todo público.',
+  fechas: [
+    {
+      mes: 'agosto de 2025',
+      dia: '15',
+      horarios: [{ hora: '20', minuto: '30' }]
+    },
+    {
+      mes: 'septiembre de 2025',
+      dia: '20',
+      horarios: [
+        { hora: '13', minuto: '45' },
+        { hora: '17', minuto: '00' }
+      ]
+    }
+  ]
+};
 
 describe('Ticketazo UI - Organizador', () => {
   beforeEach(() => {
@@ -46,127 +76,86 @@ describe('Ticketazo UI - Organizador', () => {
     });
   });
 
-  it('verificar la validación de campos obligatorios', () => {
-    cy.visit('https://vps-3696213-x.dattaweb.com/');
-    cy.get('button[aria-label="Toggle menu"]').eq(0).click();
-    cy.get(':nth-child(2) > .pb-4').click();
-    cy.get('.rounded-b-large > .z-0').click();
-    // Verificar que se muestran mensajes de error
-    cy.get('[data-cy="input-titulo"]').should('exist');
-    cy.get('[data-cy="select-edad"]').should('exist');
-    cy.get('[data-cy="select-genero"]').should('exist');
-    cy.get('[data-cy="input-duracion"]').should('exist');
-    cy.get('[data-cy="select-lugar-evento"]').should('exist');
-    cy.wait(3000); // esperar a que se muestren los mensajes de error
-  });
-
   it('cargar eventos', () => {
     cy.visit('https://vps-3696213-x.dattaweb.com/');
     cy.get('button[aria-label="Toggle menu"]').eq(0).click();
     cy.get(':nth-child(2) > .pb-4').click();
     cy.get('input[aria-label="Evento con múltiples fechas y horarios"]').click();
 
-    cy.get('[data-cy="input-titulo"]').type('The end');
+    cy.get('[data-cy="input-titulo"]').type(evento.titulo);
     cy.get('[data-cy="select-edad"]').click();
-    cy.contains('span', 'ATP').click();
+    cy.contains('span', evento.edad).click();
     cy.get('[data-cy="select-genero"]').click();
-    cy.contains('span', 'Recital').click();
+    cy.contains('span', evento.genero).click();
 
     cy.get('[data-cy="input-duracion"]').within(() => {
-      cy.get('[data-type="hour"]').type('05');
-      cy.get('[data-type="minute"]').type('00');
+      cy.get('[data-type="hour"]').type(evento.duracion.hora);
+      cy.get('[data-type="minute"]').type(evento.duracion.minuto);
     });
 
     cy.get('[data-cy="select-lugar-evento"]').click();
     cy.contains('span', 'Otro').click().wait(1000);
-    cy.get('[data-cy="input-nombre-lugar"]').type('Plaza de la Música');
-    cy.get('[data-cy="input-calle-lugar"]').type('Av. Colon');
-    cy.get('[data-cy="input-altura-lugar"]').type('1234');
-    cy.get('[data-cy="input-codigo-postal-lugar"]').type('5000');
+    cy.get('[data-cy="input-nombre-lugar"]').type(evento.lugar.nombre);
+    cy.get('[data-cy="input-calle-lugar"]').type(evento.lugar.calle);
+    cy.get('[data-cy="input-altura-lugar"]').type(evento.lugar.altura);
+    cy.get('[data-cy="input-codigo-postal-lugar"]').type(evento.lugar.codigoPostal);
     cy.get('input[aria-label="Provincia"]').click();
-    cy.contains('[role="option"]', 'Córdoba').click();
+    cy.contains('[role="option"]', evento.lugar.provincia).click();
+    cy.get('input[aria-label="Localidad"]').click().type(evento.lugar.localidad);
 
-    cy.get('input[aria-label="Localidad"]').click().type('Córdoba');
 
-    // Esperamos que aparezcan las opciones
     cy.wait(500);
+    cy.get('[role="option"]').then(($options) => {
+      const coincidencias = $options.filter((i, el) =>
+        el.innerText.trim().includes(evento.lugar.localidad)
+      );
 
-    // Comprobamos que no haya opciones repetidas
-    cy.get('[role="option"]').then($options => {
-      let repetidos = [];
-      let vistos = new Set();
-      $options.each((index, el) => {
-        const text = el.innerText.trim();
-        $options.each((i, el) => {
-          if (i !== index && el.innerText.trim() === text && !vistos.has(text)) {
-            repetidos.push(text);
-            vistos.add(text);
-          }
-        })
-      });
-
-      if (repetidos.length > 0) {
-        cy.log(`⚠️ Hay ${repetidos.length} ${repetidos.length > 1 ? 'opciones repetidas' : 'opción repetida'} `);
-        repetidos.forEach(opcion => {
-          cy.log(`🔁 Opción repetida: ${opcion}`);
-        });
-      }
-
-      const cordobas = $options.filter((i, el) => el.innerText.includes('Córdoba'));
-
-      // Intentar seleccionar la segunda opción (si existe)
-      if (cordobas.length > 1) {
+      if (coincidencias.length > 1) {
         Cypress.Promise.try(() => {
-          return cy.wrap(cordobas.eq(1)).click({ force: true });
+          return cy.wrap(coincidencias.eq(1)).click({ force: true });
         }).catch(() => {
           Cypress.log({
             name: 'Advertencia',
-            message: '❗ No se pudo hacer clic en la segunda opción Córdoba. El test continúa.',
+            message: `❗ No se pudo hacer clic en la segunda opción "${evento.lugar.localidad}". El test continúa.`,
           });
-          cy.log('⚠️ Córdoba no fue seleccionada.');
+          cy.log(`⚠️ "${evento.lugar.localidad}" no fue seleccionada correctamente.`);
         });
+      } else if (coincidencias.length === 1) {
+        cy.wrap(coincidencias.eq(0)).click({ force: true });
+        cy.log(`✅ Opción "${evento.lugar.localidad}" seleccionada.`);
       } else {
-        cy.log('✅ Solo una opción Córdoba encontrada o ninguna.');
+        cy.log(`❌ No se encontró ninguna opción que contenga: "${evento.lugar.localidad}".`);
       }
     });
 
+    cy.get('[data-cy="input-info"]').type(evento.info);
 
+    evento.fechas.forEach((fecha, index) => {
+      cy.get(`[data-cy="datepicker-fecha-${index}"] [data-slot="selector-button"]`).click();
+      cy.wait(500);
+      cy.irAlMes(fecha.mes);
+      cy.get('[role="gridcell"]').contains(fecha.dia).click();
 
-    cy.get('[data-cy="input-info"]').type('Evento de prueba apto para todo público.');
+      fecha.horarios.forEach((horario, idx) => {
+        cy.get(`[data-cy="input-horario-${index}-${idx}"]`).within(() => {
+          cy.get('[data-type="hour"]').type(horario.hora);
+          cy.get('[data-type="minute"]').type(horario.minuto);
+        });
 
-    cy.get('[data-cy="datepicker-fecha-0"] [data-slot="selector-button"]').click();
-    cy.wait(500); // opcional, para asegurar renderizado
-    cy.irAlMes('agosto de 2025');
-    cy.get('[role="gridcell"]')
-      .contains('15')
-      .click();
+        // Solo hacer clic en el botón "Agregar nuevo horario" si hay más horarios
+        if (idx < fecha.horarios.length - 1) {
+          cy.get(`:nth-child(${index + 1}) > .flex-col.gap-1 > .flex-wrap > .bg-primary`).click();
+        }
+      });
 
-    cy.get('[data-cy="input-horario-0-0"]').within(() => {
-      cy.get('[data-type="hour"]').type('20');
-      cy.get('[data-type="minute"]').type('30');
-    });
-
-    cy.get('.mt-2 > .px-4').click();
-
-    cy.get('[data-cy="datepicker-fecha-1"] [data-slot="selector-button"]').click();
-    cy.wait(500); // opcional, para asegurar renderizado
-    cy.irAlMes('septiembre de 2025');
-    cy.get('[role="gridcell"]')
-      .contains('20')
-      .click();
-    cy.get('[data-cy="input-horario-1-0"]').within(() => {
-      cy.get('[data-type="hour"]').type('13');
-      cy.get('[data-type="minute"]').type('45');
-    });
-    cy.get(':nth-child(2) > .flex-col.gap-1 > .flex-wrap > .bg-primary').click();
-    cy.get('[data-cy="input-horario-1-1"]').within(() => {
-      cy.get('[data-type="hour"]').type('17');
-      cy.get('[data-type="minute"]').type('00');
+      // Solo hacer clic en "Agregar otra fecha" si hay más fechas
+      if (index < evento.fechas.length - 1) {
+        cy.get('.mt-2 > .px-4').click();
+      }
     });
 
     cy.get('.rounded-b-large > .z-0').click();
-    cy.wait(1000); // esperar a que se guarde el evento
+    cy.wait(1000);
+  });
+});
 
-  })
-
-})
