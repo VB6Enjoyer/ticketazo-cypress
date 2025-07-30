@@ -20,7 +20,7 @@ describe('Ticketazo UI - Organizador', () => {
         cy.get('button[aria-label="Toggle menu"]').eq(0).click();
         cy.get(':nth-child(4) > .pb-4').click();
         cy.wait(2000);
-      });
+      ;
 
        var usuario = {
             email: 'cargarejemplo@ejemplo.com',
@@ -55,6 +55,7 @@ describe('Ticketazo UI - Organizador', () => {
 
             expect(encontrado, `Nombre ${usuario.nombre} encontrado en la tabla`).to.be.true;
         });
+      });
 
     })
 
